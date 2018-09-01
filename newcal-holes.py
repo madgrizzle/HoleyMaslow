@@ -101,16 +101,16 @@ desiredRotationalRadius = 139.1 #this allows you to change from rotation radius 
 ##---USE MILLIMETERS ONLY---##
 ##---My tape measure was off by 101 mm so the -101.0 adjust for it---##
 ##---CHANGE IT BECAUSE YOURS IS LIKELY DIFFERENT---###
-dH0H1 = 1133.0-101.0
-dH0H2 = 1133.0-101.0
-dH0H3 = 1129.0-101.0
-dH0H4 = 1133.0-101.0
-dH1H2 = 814.0-101.0
-dH1H4 = 2037.0-101.0
-dH2H3 = 2036.0-101.0
-dH3H4 = 812.0-101.0
-dH0M5 = 466.0-101.0
-dH2M5 = 1070.0-101.0
+dH0H1 = 1130.0-101.0
+dH0H2 = 1130.0-101.0
+dH0H3 = 1130.0-101.0
+dH0H4 = 1129.0-101.0
+dH1H2 = 813.5-101.0
+dH1H4 = 2032.5-101.0
+dH2H3 = 2031.5-101.0
+dH3H4 = 811.0-101.0
+dH0M5 = 455.0-101.0
+dH2M5 = 1066.0-101.0
 
 #optimization parameters.. this really does affect how well you can arrive at a solution and how good of a solution it is
 acceptableTolerance = .05
@@ -141,15 +141,22 @@ sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(
 #calculate coordinates of the holes based upon distance measurements
 H0x, H0y, H1x, H1y, H2x, H2y, H3x, H3y, H4x, H4y = CalculateCoordinates(dH0H1, dH0H2, dH0H3, dH0H4, dH1H2, dH1H4, dH2H3, dH3H4, dH0M5, dH2M5)
 
+print "Desired:"
 print "aH1x:"+str(aH1x)+", aH1y:"+str(aH1y)
 print "aH2x:"+str(aH2x)+", aH2y:"+str(aH2y)
 print "aH3x:"+str(aH3x)+", aH3y:"+str(aH3y)
 print "aH4x:"+str(aH4x)+", aH4y:"+str(aH4y)
-print ""
+print "Actual:"
 print "H1x:"+str(H1x)+", H1y:"+str(H1y)
 print "H2x:"+str(H2x)+", H2y:"+str(H2y)
 print "H3x:"+str(H3x)+", H3y:"+str(H3y)
 print "H4x:"+str(H4x)+", H4y:"+str(H4y)
+print "Delta:"
+print "H1x:"+str(aH1x-H1x)+", H1y:"+str(aH1y-H1y)
+print "H2x:"+str(aH2x-H2x)+", H2y:"+str(aH2y-H2y)
+print "H3x:"+str(aH3x-H3x)+", H3y:"+str(aH3y-H3y)
+print "H4x:"+str(aH4x-H4x)+", H4y:"+str(aH4y-H4y)
+
 x=raw_input("") #pause for review
 
 # Calculate the chain lengths for each hole location based upon inputted model
