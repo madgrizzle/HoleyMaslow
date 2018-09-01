@@ -39,32 +39,32 @@ def CalculateCoordinates(dH0H1, dH0H2, dH0H3, dH0H4, dH1H2, dH1H4, dH2H3, dH3H4,
 	H0y = 0
 	M5x = 0
 	M5y = dH0M5
-	H2y = (dH0M5*dH0M5+dH0H2*dH0H2-dH2M5*dH2M5)/(2*dH0M5)
+	H2y = (dH0M5*dH0M5+dH0H2*dH0H2-dH2M5*dH2M5)/(2*dH0M5)*-1.0
 	H2x = math.sqrt( (dH0M5+dH0H2+dH2M5) * (dH0M5+dH0H2-dH2M5) * (dH0M5-dH0H2+dH2M5) * (-dH0M5+dH0H2+dH2M5) )/(2*dH0M5)*-1.0
 	#print "H2x:"+str(H2x)+", H2y:"+str(H2y)
 
-	H3y = (dH0M5*dH0M5+dH0H3*dH0H3-(dH2H3-dH2M5)*(dH2H3-dH2M5))/(2*dH0M5)
+	H3y = (dH0M5*dH0M5+dH0H3*dH0H3-(dH2H3-dH2M5)*(dH2H3-dH2M5))/(2*dH0M5)*-1.0
 	H3x = math.sqrt( (dH0M5+dH0H3+(dH2H3-dH2M5)) * (dH0M5+dH0H3-(dH2H3-dH2M5)) * (dH0M5-dH0H3+(dH2H3-dH2M5)) * (-dH0M5+dH0H3+(dH2H3-dH2M5)) )/(2*dH0M5)
 	#print "H3x:"+str(H3x)+", H3y:"+str(H3y)
 
-	theta = math.atan2(H3y,H3x)
+	theta = math.atan2(H3y,H3x*-1.0)
 	#print "Theta:"+str(theta)
 	rH4x = (dH0H3*dH0H3-dH3H4*dH3H4+dH0H4*dH0H4)/(2*dH0H3)
 	rH4y = math.sqrt( (dH0H3+dH3H4+dH0H4) * (dH0H3+dH3H4-dH0H4) *(dH0H3-dH3H4+dH0H4) * (-dH0H3+dH3H4+dH0H4) )/(2*dH0H3)
 	#print "rH4x:"+str(rH4x)+", rH4y:"+str(rH4y)
 
-	H4x = (rH4x*math.cos(-theta))-(rH4y*math.sin(-theta))
+	H4x = ((rH4x*math.cos(-theta))-(rH4y*math.sin(-theta)))*-1.0
 	H4y = ((rH4x*math.sin(-theta))+(rH4y*math.cos(-theta)))*-1.0
 	#print "H4x:"+str(H4x)+", H4y:"+str(H4y)
 	# Calculate the actual chain lengths for each cut location
 
-	theta = math.atan2(H2y,H2x*-1.0)
+	theta = math.atan2(H2y,H2x)
 	#print "Theta:"+str(theta)
 	rH1x = (dH0H2*dH0H2-dH1H2*dH1H2+dH0H1*dH0H1)/(2*dH0H2)
 	rH1y = math.sqrt( (dH0H2+dH1H2+dH0H1) * (dH0H2+dH1H2-dH0H1) *(dH0H2-dH1H2+dH0H1) * (-dH0H2+dH1H2+dH0H1) )/(2*dH0H2)
 	#print "rH1x:"+str(rH1x)+", rH1y:"+str(rH1y)
 
-	H1x = ((rH1x*math.cos(-theta))-(rH1y*math.sin(-theta)))*-1.0
+	H1x = ((rH1x*math.cos(-theta))-(rH1y*math.sin(-theta)))
 	H1y = ((rH1x*math.sin(-theta))+(rH1y*math.cos(-theta)))*-1.0
 	return H0x, H0y, H1x, H1y, H2x, H2y, H3x, H3y, H4x, H4y
 
@@ -76,7 +76,7 @@ chainPitch = 6.35
 
 # adjust in the event the hole pattern is changed
 aH1x = (workspaceWidth/2.0-254.0)*-1.0
-aH1y = (workspaceHeight/2.0-254.0)*-1.0
+aH1y = (workspaceHeight/2.0-254.0)
 aH2x = aH1x
 aH2y = aH1y*-1.0
 aH3x = aH1x*-1.0
@@ -134,13 +134,18 @@ adjustChainSag = True
 # Gather current machine parameters
 leftMotorX = motorSpacing/-2.0 #based on current method since gc/firmware doesn't allow for indpendent x,y of motors
 rightMotorX = motorSpacing/2.0
-leftMotorY = ((workspaceHeight/2.0) + motorYoffset)*-1.0
-rightMotorY = ((workspaceHeight/2.0) + motorYoffset)*-1.0
-sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159 + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
+leftMotorY = ((workspaceHeight/2.0) + motorYoffset)
+rightMotorY = ((workspaceHeight/2.0) + motorYoffset)
+sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
 
 #calculate coordinates of the holes based upon distance measurements
 H0x, H0y, H1x, H1y, H2x, H2y, H3x, H3y, H4x, H4y = CalculateCoordinates(dH0H1, dH0H2, dH0H3, dH0H4, dH1H2, dH1H4, dH2H3, dH3H4, dH0M5, dH2M5)
 
+print "aH1x:"+str(aH1x)+", aH1y:"+str(aH1y)
+print "aH2x:"+str(aH2x)+", aH2y:"+str(aH2y)
+print "aH3x:"+str(aH3x)+", aH3y:"+str(aH3y)
+print "aH4x:"+str(aH4x)+", aH4y:"+str(aH4y)
+print ""
 print "H1x:"+str(H1x)+", H1y:"+str(H1y)
 print "H2x:"+str(H2x)+", H2y:"+str(H2y)
 print "H3x:"+str(H3x)+", H3y:"+str(H3y)
@@ -383,8 +388,8 @@ distBetweenMotors = math.sqrt( math.pow(bestleftMotorXEst-bestrightMotorXEst,2)+
 print "Distance Between Motors: "+str(distBetweenMotors)
 print "Motor Offset Height in mm: "+str((workspaceHeight/2.0+(bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))*-1.0)
 print "--Advanced Settings Tab--"
-print "Chain Tolerance, Left Chain: "+str(round(bestleftChainToleranceEst,7))
-print "Chain Tolerance, Right Chain: "+str(round(bestrightChainToleranceEst,7))
+print "Chain Tolerance, Left Chain: "+str(round((1.0-bestleftChainToleranceEst)*100,7))
+print "Chain Tolerance, Right Chain: "+str(round((1.0-bestrightChainToleranceEst)*100,7))
 motorTilt = math.atan((bestrightMotorYEst-bestleftMotorYEst)/(bestrightMotorXEst-bestleftMotorXEst))*180.0/3.141592
 print "Top Beam Tilt: "+str(round(motorTilt,7))
 print "Rotation Radius for Triangular Kinematics: " + str(round(bestrotationRadiusEst, 4))
