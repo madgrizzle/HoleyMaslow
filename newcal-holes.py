@@ -285,7 +285,7 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 				motorTilt = math.atan((bestrightMotorYEst-bestleftMotorYEst)/(bestrightMotorXEst-bestleftMotorXEst))*180.0/3.141592
 				print "---------------------------------------------------------------------------------------------"
 				print "Best so far at N: " + str(n) + ", Error Magnitude: " + str(round(bestErrorMagnitude, 3))
-				print "Motor Spacing: "+str(distBetweenMotors) + ", Motor Elevation: "+str((workspaceHeight/2.0+(bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))*-1.0)+", Top Beam Tilt: "+str(motorTilt) +" degrees"
+				print "Motor Spacing: "+str(distBetweenMotors) + ", Motor Elevation: "+str(((bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))-workspaceHeight/2.0)+", Top Beam Tilt: "+str(motorTilt) +" degrees"
 				tleftMotorX = math.cos(motorTilt*3.141592/180.0)*distBetweenMotors/-2.0 + (bestrightMotorXEst+bestleftMotorXEst)/2.0
 				tleftMotorY = math.sin(motorTilt*3.141592/180.0)*distBetweenMotors/-2.0 + bestleftMotorYEst + (bestrightMotorYEst-bestleftMotorYEst)/2.0
 				trightMotorX = math.cos(motorTilt*3.141592/180.0)*distBetweenMotors+tleftMotorX
@@ -386,7 +386,7 @@ print "Parameters for new GC"
 print "--Maslow Settings Tab--"
 distBetweenMotors = math.sqrt( math.pow(bestleftMotorXEst-bestrightMotorXEst,2)+math.pow(bestleftMotorYEst-bestrightMotorYEst,2))
 print "Distance Between Motors: "+str(distBetweenMotors)
-print "Motor Offset Height in mm: "+str((workspaceHeight/2.0+(bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))*-1.0)
+print "Motor Offset Height in mm: "+(((bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))-workspaceHeight/2.0)
 print "--Advanced Settings Tab--"
 print "Chain Tolerance, Left Chain: "+str(round((1.0-bestleftChainToleranceEst)*100,7))
 print "Chain Tolerance, Right Chain: "+str(round((1.0-bestrightChainToleranceEst)*100,7))
