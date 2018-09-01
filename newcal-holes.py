@@ -86,14 +86,15 @@ aH4y = aH1y
 
 #parameters used during calibration cut.. currently assumes motors are level and 0,0 is centered
 ##---CHANGE THESE TO MATCH YOUR MACHINE WHEN YOU RAN THE HOLE PATTERN---##
-motorSpacing = 3601.2
+motorSpacing = 3602.71093
 desiredMotorSpacing = 3602.6 #this allows you to change from motor spacing you cut with and make it a fixed value
-motorYoffset = 468.4
-rotationRadius = 139.1
-chainSagCorrection = 31.865887
+motorYoffset = 474.34945
+motorTilt = 0.04259
+rotationRadius = 138.832
+chainSagCorrection = 28.292794
 chainOverSprocket = 1
-leftChainTolerance = 1.0 # can't use current values .. value must be less than or equal to 1
-rightChainTolerance =1.0 # can't use current values .. value must be less than or equal to 1
+leftChainTolerance = 1.0-(0.06165/100.0) # can't use current values .. value must be less than or equal to 1
+rightChainTolerance =1.0-(0.22163/100.0) # can't use current values .. value must be less than or equal to 1
 desiredRotationalRadius = 139.1 #this allows you to change from rotation radius you cut with and make it a fixed value
 
 #measured distances of hole pattern
@@ -132,11 +133,12 @@ adjustChainCompensationInterval = 10 #0 means never, 1 means always, 100 means e
 adjustChainSag = True
 
 # Gather current machine parameters
-leftMotorX = motorSpacing/-2.0 #based on current method since gc/firmware doesn't allow for indpendent x,y of motors
-rightMotorX = motorSpacing/2.0
-leftMotorY = ((workspaceHeight/2.0) + motorYoffset)
-rightMotorY = ((workspaceHeight/2.0) + motorYoffset)
 sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
+leftMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing/-2.0
+leftMotorY = math.sin(motorTilt*3.141592/180.0)*motorSpacing/-2.0 + motorYoffset+workspaceHeight/2.0
+rightMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing+leftMotorX
+rightMotorY = math.sin(motorTilt*3.141592/180.0)*motorSpacing/2.0 + motorYoffset +workspaceHeight/2.0
+
 
 #calculate coordinates of the holes based upon distance measurements
 H0x, H0y, H1x, H1y, H2x, H2y, H3x, H3y, H4x, H4y = CalculateCoordinates(dH0H1, dH0H2, dH0H3, dH0H4, dH1H2, dH1H4, dH2H3, dH3H4, dH0M5, dH2M5)
@@ -393,7 +395,7 @@ print "Parameters for new GC"
 print "--Maslow Settings Tab--"
 distBetweenMotors = math.sqrt( math.pow(bestleftMotorXEst-bestrightMotorXEst,2)+math.pow(bestleftMotorYEst-bestrightMotorYEst,2))
 print "Distance Between Motors: "+str(distBetweenMotors)
-print "Motor Offset Height in mm: "+(((bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))-workspaceHeight/2.0)
+print "Motor Offset Height in mm: "+str(((bestleftMotorYEst+(bestrightMotorYEst-bestleftMotorYEst)/2.0))-workspaceHeight/2.0)
 print "--Advanced Settings Tab--"
 print "Chain Tolerance, Left Chain: "+str(round((1.0-bestleftChainToleranceEst)*100,7))
 print "Chain Tolerance, Right Chain: "+str(round((1.0-bestrightChainToleranceEst)*100,7))
