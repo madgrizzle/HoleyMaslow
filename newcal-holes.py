@@ -102,8 +102,8 @@ if (holePattern == 3):
 	aH3y = aH2y
 	aH4x = aH3x
 	aH4y = aH1y
-	aH5x = -304.8/2.0
-	aH5y = 304.8/2.0
+	aH5x = -304.8
+	aH5y = 304.8
 	aH6x = aH5x
 	aH6y = aH5y*-1.0
 	aH7x = aH5x*-1.0
@@ -114,15 +114,15 @@ if (holePattern == 3):
 
 #parameters used during calibration cut.. currently assumes motors are level and 0,0 is centered
 ##---CHANGE THESE TO MATCH YOUR MACHINE WHEN YOU RAN THE HOLE PATTERN---##
-motorSpacing = 3602.71093
+motorSpacing = 3602.6
 desiredMotorSpacing = 3602.6 #this allows you to change from motor spacing you cut with and make it a fixed value
-motorYoffset = 474.34945
-motorTilt = 0.04259
-rotationRadius = 138.832
-chainSagCorrection = 28.292794
+motorYoffset = 474
+motorTilt = 0.07
+rotationRadius = 139.1
+chainSagCorrection = 30
 chainOverSprocket = 1
-leftChainTolerance = 1.0-(0.06165/100.0) # can't use current values .. value must be less than or equal to 1
-rightChainTolerance =1.0-(0.22163/100.0) # can't use current values .. value must be less than or equal to 1
+leftChainTolerance = 1.0-(0.0/100.0) # can't use current values .. value must be less than or equal to 1
+rightChainTolerance =1.0-(0.0/100.0) # can't use current values .. value must be less than or equal to 1
 desiredRotationalRadius = 139.1 #this allows you to change from rotation radius you cut with and make it a fixed value
 
 #measured distances of hole pattern
@@ -130,27 +130,39 @@ desiredRotationalRadius = 139.1 #this allows you to change from rotation radius 
 ##---USE MILLIMETERS ONLY---##
 ##---My tape measure was off by 101 mm so the -101.0 adjust for it---##
 ##---CHANGE IT BECAUSE YOURS IS LIKELY DIFFERENT---###
-dH0H1 = 1130.0-101.0
-dH0H2 = 1130.0-101.0
-dH0H3 = 1130.0-101.0
-dH0H4 = 1129.0-101.0
-dH1H2 = 813.5-101.0
-dH1H4 = 2032.5-101.0
-dH2H3 = 2031.5-101.0
-dH3H4 = 811.0-101.0
-dH0M5 = 455.0-101.0
-dH2M5 = 1066.0-101.0
-if (holePattern == 3):
-	dH0H5 = 316.5261-101.0
-	dH0H6 = 316.5261-101.0
-	dH0H7 = 316.5261-101.0
-	dH0H8 = 316.5261-101.0
-	dH5H6 = 405.8-101.0
-	dH5H8 = 405.8-101.0
-	dH6H7 = 405.8-101.0
-	dH7H8 = 405.8-101.0
-	dH0M9 = 253.4-101.0
-	dH6M9 = 253.4-101.0
+dH0H1 = 1071.5-40.0
+dH0H2 = 1072.0-40.0
+dH0H3 = 1069.0-40.0
+dH0H4 = 1073.0-40.0
+dH1H2 = 752.0-40.0
+dH1H4 = 1977.0-40.0
+dH2H3 = 1976.0-40.0
+dH3H4 = 750.0-40.0
+dH0M5 = 385.0-40.0
+dH2M5 = 1013.0-40.0
+
+dH0H5 = 471.0-40.0
+dH0H6 = 471.5-40.0
+dH0H7 = 471.0-40.0
+dH0H8 = 472.0-40.0
+dH5H6 = 650.0-40.0
+dH5H8 = 651.0-40.0
+dH6H7 = 651.5-40.0
+dH7H8 = 647.5-40.0
+dH0M9 = 350.0-40.0
+dH6M9 = 344.0-40.0
+
+if (holePattern==1):
+	dH0H1 = dH0H5
+	dH0H2 = dH0H6
+	dH0H3 = dH0H7
+	dH0H4 = dH0H8
+	dH1H2 = dH5H6
+	dH1H4 = dH5H8
+	dH2H3 = dH6H7
+	dH3H4 = dH7H8
+	dH0M5 = dH0M9
+	dH2M5 = dH6M9
 
 #optimization parameters.. this really does affect how well you can arrive at a solution and how good of a solution it is
 acceptableTolerance = .05
@@ -167,7 +179,7 @@ adjustMotorYcoord = True  # this allows raising lowering of top beam
 adjustMotorTilt = True  # this allows tilting of top beam
 adjustMotorXcoord = True  # this allows shifting of top beam
 adjustMotorSpacingInterval = 50 #0 means never, 1 means always, 100 means every 100 times there's no improvement
-adjustRotationalRadiusInterval = 0 #0 means never, 1 means always, 100 means every 100 times there's no improvement
+adjustRotationalRadiusInterval = 50 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustChainCompensationInterval = 10 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustChainSag = True
 
@@ -193,7 +205,7 @@ if (holePattern == 3):
 	print "aH5x:"+str(aH5x)+", aH5y:"+str(aH5y)
 	print "aH6x:"+str(aH6x)+", aH6y:"+str(aH6y)
 	print "aH7x:"+str(aH7x)+", aH7y:"+str(aH7y)
-	print "aH8x:"+str(aH8x)+", aH8y:"+str(aH6y)
+	print "aH8x:"+str(aH8x)+", aH8y:"+str(aH8y)
 print "Actual:"
 print "H1x:"+str(H1x)+", H1y:"+str(H1y)
 print "H2x:"+str(H2x)+", H2y:"+str(H2y)
@@ -203,7 +215,7 @@ if (holePattern == 3):
 	print "H5x:"+str(H5x)+", H5y:"+str(H5y)
 	print "H6x:"+str(H6x)+", H6y:"+str(H6y)
 	print "H7x:"+str(H7x)+", H7y:"+str(H7y)
-	print "H8x:"+str(H8x)+", H8y:"+str(H6y)
+	print "H8x:"+str(H8x)+", H8y:"+str(H8y)
 print "Delta:"
 print "H1x:"+str(aH1x-H1x)+", H1y:"+str(aH1y-H1y)
 print "H2x:"+str(aH2x-H2x)+", H2y:"+str(aH2y-H2y)
@@ -252,7 +264,7 @@ rightMotorYEst = rightMotorY
 leftChainToleranceEst = leftChainTolerance
 rightChainToleranceEst = rightChainTolerance
 rotationRadiusEst = desiredRotationalRadius  # Not affected by chain compensation
-chainSagCorrectionEst= chainSagCorrection
+chainSagCorrectionEst= 0.0#chainSagCorrection
 
 LChainErrorHole1 = acceptableTolerance #this just makes it a float really
 LChainErrorHole2 = acceptableTolerance
@@ -279,7 +291,7 @@ bestErrorMagnitude = 99999999.9
 reportCounter = 0
 adjustMotorSpacingCounter = 0
 adjustRotationalRadiusCounter = 0
-adjustChainCompensationCoutner = 0
+adjustChainCompensationCounter = 0
 adjustMotorSpacing = False # just initializing these variables
 adjustRotationalRadius = False # just initializing these variables
 adjustChainCompensation = False # just initializing these variables
@@ -464,6 +476,9 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 			Completed = True
 		if (picked == 3 and adjustChainSag):
 			chainSagCorrectionEst += errorMagnitude*chainSagCorrectionCorrectionScale*tscaleMultiplier
+#			if (chainSagCorrectionEst<10.0):
+#				chainSagCorrectionEst=10.0
+			#print str(chainSagCorrectionEst)
 			Completed = True
 		if (picked == 4 and adjustRotationalRadius): #recommend against this one if at all possible
 			rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier
