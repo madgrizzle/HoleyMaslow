@@ -1,7 +1,15 @@
 import math
 import random
 
-def CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, targetX, targetY, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, oldSag):
+def CalculateMaximumError(error):
+	if (math.fabs(error) < 0.3):
+		errorReturn = 0.3*0.3
+	else:
+		errorReturn = error*error
+	return errorReturn
+
+
+def CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, targetX, targetY, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, oldSag, dX, dY):
 	# dX = AH1x-H1x, dY = AH1y-H1y
 	leftMotorDistanceTarget = math.sqrt(math.pow(leftMotorX - targetX,2) + math.pow(leftMotorY - targetY ,2))
 	rightMotorDistanceTarget = math.sqrt(math.pow(rightMotorX - targetX,2) + math.pow(rightMotorY - targetY ,2))
@@ -120,20 +128,6 @@ if (holePattern == 3):
 	aH8x = aH7x
 	aH8y = aH5y
 
-
-#parameters used during calibration cut.. currently assumes motors are level and 0,0 is centered
-##---CHANGE THESE TO MATCH YOUR MACHINE WHEN YOU RAN THE HOLE PATTERN---##
-motorSpacing = 3602.98
-desiredMotorSpacing = motorSpacing #this allows you to change from motor spacing you cut with and make it a fixed value
-motorYoffset = 475.57
-motorTilt = -0.3583
-rotationRadius = 137.8601
-chainSagCorrection = 31.039523
-chainOverSprocket = 1
-leftChainTolerance = 1.0-(0.09636/100.0) # can't use current values .. value must be less than or equal to 1
-rightChainTolerance =1.0-(0.25666/100.0) # can't use current values .. value must be less than or equal to 1
-desiredRotationalRadius = rotationRadius #this allows you to change from rotation radius you cut with and make it a fixed value
-
 #measured distances of hole pattern
 ##---CHANGE THESE TO WHAT YOU MEASURED---##
 ##---USE MILLIMETERS ONLY---##
@@ -175,7 +169,7 @@ if (holePattern==1):
 
 #optimization parameters.. this really does affect how well you can arrive at a solution and how good of a solution it is
 acceptableTolerance = .05
-numberOfIterations = 5000000  # reduced number of iterations
+numberOfIterations = 100000000  # reduced number of iterations
 motorYcoordCorrectionScale = 0.01
 motorXcoordCorrectionScale = 0.05
 chainSagCorrectionCorrectionScale = 0.01
@@ -187,15 +181,23 @@ chainCompensationCorrectionScale = 0.01
 adjustMotorYcoord = True  # this allows raising lowering of top beam
 adjustMotorTilt = True  # this allows tilting of top beam
 adjustMotorXcoord = False  # this allows shifting of top beam
-adjustMotorSpacingInterval = 50 #0 means never, 1 means always, 100 means every 100 times there's no improvement
-<<<<<<< HEAD
-adjustRotationalRadiusInterval = 0 #0 means never, 1 means always, 100 means every 100 times there's no improvement
-adjustChainCompensationInterval = 200 #0 means never, 1 means always, 100 means every 100 times there's no improvement
-=======
-adjustRotationalRadiusInterval = 10 #0 means never, 1 means always, 100 means every 100 times there's no improvement
+adjustMotorSpacingInterval = 100 #0 means never, 1 means always, 100 means every 100 times there's no improvement
+adjustRotationalRadiusInterval = 100 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustChainCompensationInterval = 10 #0 means never, 1 means always, 100 means every 100 times there's no improvement
->>>>>>> f9236270942c601bef232ca75c08558f00404836
 adjustChainSag = True
+
+#parameters used during calibration cut.. currently assumes motors are level and 0,0 is centered
+##---CHANGE THESE TO MATCH YOUR MACHINE WHEN YOU RAN THE HOLE PATTERN---##
+motorSpacing = 3602.98
+desiredMotorSpacing = motorSpacing #this allows you to change from motor spacing you cut with and make it a fixed value
+motorYoffset = 475.57
+motorTilt = -0.3583
+rotationRadius = 137.8601
+chainSagCorrection = 31.039523
+chainOverSprocket = 1
+leftChainTolerance = 1.0-(0.09636/100.0) # can't use current values .. value must be less than or equal to 1
+rightChainTolerance =1.0-(0.25666/100.0) # can't use current values .. value must be less than or equal to 1
+desiredRotationalRadius = 140.0 #rotationRadius #this allows you to change from rotation radius you cut with and make it a fixed value
 
 # Gather current machine parameters
 sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
@@ -203,6 +205,15 @@ leftMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing/-2.0
 leftMotorY = math.sin(motorTilt*3.141592/180.0)*motorSpacing/-2.0 + motorYoffset+workspaceHeight/2.0
 rightMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing+leftMotorX
 rightMotorY = math.sin(motorTilt*3.141592/180.0)*motorSpacing/2.0 + motorYoffset +workspaceHeight/2.0
+
+leftMotorXEst = -1801.39470025#desiredMotorSpacing/-2.0#leftMotorX-(desiredMotorSpacing-motorSpacing)/2.0 #adjusts motor x based upon change in motor spacing
+leftMotorYEst = 1099.1285#leftMotorY+(rightMotorY-leftMotorY)/2.0
+rightMotorXEst = 1801.49051#desiredMotorSpacing/2.0#rightMotorX+(desiredMotorSpacing-motorSpacing)/2.0
+rightMotorYEst = 1075.7175#rightMotorY-(rightMotorY-leftMotorY)/2.0#rightMotorY
+leftChainToleranceEst = 1.0#leftChainTolerance
+rightChainToleranceEst = 1-0.1747015/100.0#1.0#rightChainTolerance
+rotationRadiusEst = 140.041#desiredRotationalRadius  # Not affected by chain compensation
+chainSagCorrectionEst= 28.140215#chainSagCorrection
 
 iterativeSolvedH0M5= True
 
@@ -215,7 +226,7 @@ if (iterativeSolvedH0M5):
 		dH0M5 += errorImprovementInterval
 		H0x, H0y, H1x, H1y, H2x, H2y, H3x, H3y, H4x, H4y = CalculateCoordinates(dH0H1, dH0H2, dH0H3, dH0H4, dH1H2, dH1H4, dH2H3, dH3H4, dH0M5, dH2M5)
 		errorMagnitude = dH1H4 - math.sqrt( math.pow(H1x-H4x,2)+math.pow(H1y-H4y,2))
-		print str(previousErrorMagnitude)+", "+str(errorMagnitude)+", "+str(dH0M5)
+		#print str(previousErrorMagnitude)+", "+str(errorMagnitude)+", "+str(dH0M5)
 		#x=raw_input()
 		if (errorImprovementInterval!=0 and math.fabs(previousErrorMagnitude) < math.fabs(errorMagnitude)):
 			break;
@@ -231,7 +242,7 @@ if (iterativeSolvedH0M5):
 			dH0M9 += errorImprovementInterval
 			H0x, H0y, H5x, H5y, H6x, H6y, H7x, H7y, H8x, H8y = CalculateCoordinates(dH0H5, dH0H6, dH0H7, dH0H8, dH5H6, dH5H8, dH6H7, dH7H8, dH0M9, dH6M9)
 			errorMagnitude = dH5H8 - math.sqrt( math.pow(H5x-H8x,2)+math.pow(H5y-H8y,2))
-			print str(previousErrorMagnitude)+", "+str(errorMagnitude)+", "+str(dH0M5)
+			#print str(previousErrorMagnitude)+", "+str(errorMagnitude)+", "+str(dH0M5)
 			#x=raw_input()
 			if (errorImprovementInterval!=0 and math.fabs(previousErrorMagnitude) < math.fabs(errorMagnitude)):
 				break;
@@ -277,17 +288,45 @@ x=raw_input("") #pause for review
 
 # Calculate the chain lengths for each hole location based upon inputted model
 
-LChainLengthHole1, RChainLengthHole1 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH1x, aH1y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-LChainLengthHole2, RChainLengthHole2 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH2x, aH2y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-LChainLengthHole3, RChainLengthHole3 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH3x, aH3y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-LChainLengthHole4, RChainLengthHole4 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH4x, aH4y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
+LChainLengthHole1, RChainLengthHole1 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH1x, aH1y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+LChainLengthHole2, RChainLengthHole2 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH2x, aH2y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+LChainLengthHole3, RChainLengthHole3 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH3x, aH3y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+LChainLengthHole4, RChainLengthHole4 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH4x, aH4y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
 if (holePattern == 3):
-	LChainLengthHole5, RChainLengthHole5 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH5x, aH5y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-	LChainLengthHole6, RChainLengthHole6 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH6x, aH6y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-	LChainLengthHole7, RChainLengthHole7 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH7x, aH7y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
-	LChainLengthHole8, RChainLengthHole8 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH8x, aH8y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False)
+	LChainLengthHole5, RChainLengthHole5 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH5x, aH5y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	LChainLengthHole6, RChainLengthHole6 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH6x, aH6y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	LChainLengthHole7, RChainLengthHole7 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH7x, aH7y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	LChainLengthHole8, RChainLengthHole8 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, aH8x, aH8y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
 
-print "errorLH1:"+str(errorLH1)
+eLChainLengthHole1, eRChainLengthHole1 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H1x, H1y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+eLChainLengthHole2, eRChainLengthHole2 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H2x, H2y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+eLChainLengthHole3, eRChainLengthHole3 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H3x, H3y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+eLChainLengthHole4, eRChainLengthHole4 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H4x, H4y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+if (holePattern == 3):
+	eLChainLengthHole5, eRChainLengthHole5 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H5x, H5y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	eLChainLengthHole6, eRChainLengthHole6 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H6x, H6y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	eLChainLengthHole7, eRChainLengthHole7 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H7x, H7y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+	eLChainLengthHole8, eRChainLengthHole8 = CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, H8x, H8y, chainOverSprocket, rotationRadius, chainSagCorrection, leftChainTolerance, rightChainTolerance, False, aH1x-H1x, aH1y-H1y)
+
+errorLH1 = LChainLengthHole1-eLChainLengthHole1;
+errorLH2 = LChainLengthHole2-eLChainLengthHole2;
+errorLH3 = LChainLengthHole3-eLChainLengthHole3;
+errorLH4 = LChainLengthHole4-eLChainLengthHole4;
+errorRH1 = RChainLengthHole1-eRChainLengthHole1;
+errorRH2 = RChainLengthHole2-eRChainLengthHole2;
+errorRH3 = RChainLengthHole3-eRChainLengthHole3;
+errorRH4 = RChainLengthHole4-eRChainLengthHole4;
+if (holePattern == 3):
+	errorLH5 = LChainLengthHole5-eLChainLengthHole5;
+	errorLH6 = LChainLengthHole6-eLChainLengthHole6;
+	errorLH7 = LChainLengthHole7-eLChainLengthHole7;
+	errorLH8 = LChainLengthHole8-eLChainLengthHole8;
+	errorRH5 = RChainLengthHole5-eRChainLengthHole5;
+	errorRH6 = RChainLengthHole6-eRChainLengthHole6;
+	errorRH7 = RChainLengthHole7-eRChainLengthHole7;
+	errorRH8 = RChainLengthHole8-eRChainLengthHole8;
+
+#print "errorLH1:"+str(errorLH1)
 
 print "Machine parameters:"
 print "Rotation Disk Radius: " + str(rotationRadius) + ", Chain Sag Correction Value: " + str(chainSagCorrection)
@@ -304,14 +343,7 @@ if (holePattern == 3):
 
 x=raw_input("") #pause for review
 
-leftMotorXEst = desiredMotorSpacing/-2.0#leftMotorX-(desiredMotorSpacing-motorSpacing)/2.0 #adjusts motor x based upon change in motor spacing
-leftMotorYEst = leftMotorY+(rightMotorY-leftMotorY)/2.0
-rightMotorXEst = desiredMotorSpacing/2.0#rightMotorX+(desiredMotorSpacing-motorSpacing)/2.0
-rightMotorYEst = rightMotorY-(rightMotorY-leftMotorY)/2.0#rightMotorY
-leftChainToleranceEst = 1.0#leftChainTolerance
-rightChainToleranceEst = 1.0#rightChainTolerance
-rotationRadiusEst = desiredRotationalRadius  # Not affected by chain compensation
-chainSagCorrectionEst= 30.0#chainSagCorrection
+
 
 LChainErrorHole1 = acceptableTolerance #this just makes it a float really
 LChainErrorHole2 = acceptableTolerance
@@ -347,20 +379,22 @@ n = 0
 print "Iterating for new machine parameters"
 
 # Iterate until error tolerance is achieved or maximum number of iterations occurs
-errorMagnitude = 99999
+errorMagnitude = 999999.9
+previousErrorMagnitude = 9999999.9
+bestErrorMagnitude = 9999999.9
 while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 	n += 1
 
 	# calculate chain lengths based upon estimated parameters and actual hole locations
-	LChainLengthHole1Est, RChainLengthHole1Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H1x, H1y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-	LChainLengthHole2Est, RChainLengthHole2Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H2x, H2y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-	LChainLengthHole3Est, RChainLengthHole3Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H3x, H3y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-	LChainLengthHole4Est, RChainLengthHole4Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H4x, H4y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
+	LChainLengthHole1Est, RChainLengthHole1Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH1x, aH1y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+	LChainLengthHole2Est, RChainLengthHole2Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH2x, aH2y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+	LChainLengthHole3Est, RChainLengthHole3Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH3x, aH3y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+	LChainLengthHole4Est, RChainLengthHole4Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH4x, aH4y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
 	if (holePattern == 3):
-		LChainLengthHole5Est, RChainLengthHole5Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H5x, H5y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-		LChainLengthHole6Est, RChainLengthHole6Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H6x, H6y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-		LChainLengthHole7Est, RChainLengthHole7Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H7x, H7y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
-		LChainLengthHole8Est, RChainLengthHole8Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, H8x, H8y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False)
+		LChainLengthHole5Est, RChainLengthHole5Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH5x, aH5y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+		LChainLengthHole6Est, RChainLengthHole6Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH6x, aH6y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+		LChainLengthHole7Est, RChainLengthHole7Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH7x, aH7y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
+		LChainLengthHole8Est, RChainLengthHole8Est = CalculateChainLengths(leftMotorXEst, leftMotorYEst, rightMotorXEst, rightMotorYEst, aH8x, aH8y, chainOverSprocket, rotationRadiusEst, chainSagCorrectionEst, leftChainToleranceEst, rightChainToleranceEst, False, 0.0, 0.0)
 
 	# Determine chain length errors for current estimated machine parameters versus the measured parameters
 	LChainErrorHole1 = LChainLengthHole1Est - LChainLengthHole1 + errorLH1#
@@ -372,22 +406,43 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 	RChainErrorHole3 = RChainLengthHole3Est - RChainLengthHole3 + errorRH3#
 	RChainErrorHole4 = RChainLengthHole4Est - RChainLengthHole4 + errorRH4#
 	if (holePattern == 3):
-		LChainErrorHole5 = LChainLengthHole5Est - LChainLengthHole5 + errorLH1#
-		LChainErrorHole6 = LChainLengthHole6Est - LChainLengthHole6 + errorLH2#
-		LChainErrorHole7 = LChainLengthHole7Est - LChainLengthHole7 + errorLH3#
-		LChainErrorHole8 = LChainLengthHole8Est - LChainLengthHole8 + errorLH4#
-		RChainErrorHole5 = RChainLengthHole5Est - RChainLengthHole5 + errorRH1#
-		RChainErrorHole6 = RChainLengthHole6Est - RChainLengthHole6 + errorRH2#
-		RChainErrorHole7 = RChainLengthHole7Est - RChainLengthHole7 + errorRH3#
-		RChainErrorHole8 = RChainLengthHole8Est - RChainLengthHole8 + errorRH4#
+		LChainErrorHole5 = LChainLengthHole5Est - LChainLengthHole5 + errorLH5#
+		LChainErrorHole6 = LChainLengthHole6Est - LChainLengthHole6 + errorLH6#
+		LChainErrorHole7 = LChainLengthHole7Est - LChainLengthHole7 + errorLH7#
+		LChainErrorHole8 = LChainLengthHole8Est - LChainLengthHole8 + errorLH8#
+		RChainErrorHole5 = RChainLengthHole5Est - RChainLengthHole5 + errorRH5#
+		RChainErrorHole6 = RChainLengthHole6Est - RChainLengthHole6 + errorRH6#
+		RChainErrorHole7 = RChainLengthHole7Est - RChainLengthHole7 + errorRH7#
+		RChainErrorHole8 = RChainLengthHole8Est - RChainLengthHole8 + errorRH8#
 
 
-	errorMagnitude = math.sqrt( (LChainErrorHole1*LChainErrorHole1 + LChainErrorHole2*LChainErrorHole2 + LChainErrorHole3*LChainErrorHole3 + LChainErrorHole4*LChainErrorHole4 + RChainErrorHole1*RChainErrorHole1 + RChainErrorHole2*RChainErrorHole2 + RChainErrorHole3*RChainErrorHole3 + RChainErrorHole4*RChainErrorHole4) / 8.0)
+#	errorMagnitude = math.sqrt( (LChainErrorHole1*LChainErrorHole1 + LChainErrorHole2*LChainErrorHole2 + LChainErrorHole3*LChainErrorHole3 + LChainErrorHole4*LChainErrorHole4 + RChainErrorHole1*RChainErrorHole1 + RChainErrorHole2*RChainErrorHole2 + RChainErrorHole3*RChainErrorHole3 + RChainErrorHole4*RChainErrorHole4) / 8.0)
+#	if (holePattern == 3):
+#		errorMagnitude = math.sqrt( (LChainErrorHole1*LChainErrorHole1 + LChainErrorHole2*LChainErrorHole2 + LChainErrorHole3*LChainErrorHole3 + LChainErrorHole4*LChainErrorHole4 +  LChainErrorHole5*LChainErrorHole5 + LChainErrorHole6*LChainErrorHole6 + LChainErrorHole7*LChainErrorHole7 + LChainErrorHole8*LChainErrorHole8 + RChainErrorHole1*RChainErrorHole1 + RChainErrorHole2*RChainErrorHole2 + RChainErrorHole3*RChainErrorHole3 + RChainErrorHole4*RChainErrorHole4 +  RChainErrorHole5*RChainErrorHole5 + RChainErrorHole6*RChainErrorHole6 + RChainErrorHole7*RChainErrorHole7 + RChainErrorHole8*RChainErrorHole8) / 16.0)
+
+	errorMagnitude = 0.0
+	errorMagnitude += CalculateMaximumError(LChainErrorHole1)
+	errorMagnitude += CalculateMaximumError(LChainErrorHole2)
+	errorMagnitude += CalculateMaximumError(LChainErrorHole3)
+	errorMagnitude += CalculateMaximumError(LChainErrorHole4)
+	errorMagnitude += CalculateMaximumError(RChainErrorHole1)
+	errorMagnitude += CalculateMaximumError(RChainErrorHole2)
+	errorMagnitude += CalculateMaximumError(RChainErrorHole3)
+	errorMagnitude += CalculateMaximumError(RChainErrorHole4)
 	if (holePattern == 3):
-		errorMagnitude = math.sqrt( (LChainErrorHole1*LChainErrorHole1 + LChainErrorHole2*LChainErrorHole2 + LChainErrorHole3*LChainErrorHole3 + LChainErrorHole4*LChainErrorHole4 +  LChainErrorHole5*LChainErrorHole5 + LChainErrorHole6*LChainErrorHole6 + LChainErrorHole7*LChainErrorHole7 + LChainErrorHole8*LChainErrorHole8 + RChainErrorHole1*RChainErrorHole1 + RChainErrorHole2*RChainErrorHole2 + RChainErrorHole3*RChainErrorHole3 + RChainErrorHole4*RChainErrorHole4 +  RChainErrorHole5*RChainErrorHole5 + RChainErrorHole6*RChainErrorHole6 + RChainErrorHole7*RChainErrorHole7 + RChainErrorHole8*RChainErrorHole8) / 16.0)
+		errorMagnitude += CalculateMaximumError(LChainErrorHole5)
+		errorMagnitude += CalculateMaximumError(LChainErrorHole6)
+		errorMagnitude += CalculateMaximumError(LChainErrorHole7)
+		errorMagnitude += CalculateMaximumError(LChainErrorHole8)
+		errorMagnitude += CalculateMaximumError(RChainErrorHole5)
+		errorMagnitude += CalculateMaximumError(RChainErrorHole6)
+		errorMagnitude += CalculateMaximumError(RChainErrorHole7)
+		errorMagnitude += CalculateMaximumError(RChainErrorHole8)
+		errorMagnitude = math.sqrt(errorMagnitude/16.0)
+	else:
+		errorMagnitude = math.sqrt(errorMagnitude/8.0)
 
 	if (errorMagnitude >= previousErrorMagnitude):
-		#print "N: "+str(n) + " Error: "+str(round(errorMagnitude,4)) + ", Chain Sag:"+str(round(chainSagCorrectionEst,4))+", scale Multiplier:"+str(scaleMultiplier)
 		leftMotorXEst = previousleftMotorXEst
 		leftMotorYEst = previousleftMotorYEst
 		rightMotorXEst = previousrightMotorXEst
@@ -497,17 +552,20 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 			if (motor == 0 and adjustMotorTilt): #tilt left motor up or down
 				leftMotorYEst += motorYcoordCorrectionScale*tscaleMultiplier
 				# because left motor moved, change x coordinate of right motor to keep distance between motors fixed
-				rightMotorXEst = leftMotorXEst - math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((leftMotorYEst-rightMotorYEst),2))
+				rightMotorXEst = leftMotorXEst + math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((leftMotorYEst-rightMotorYEst),2))
 				Completed = True
+				#print "1 "+str(leftMotorXEst)+", "+str(rightMotorXEst)+", "+str(desiredMotorSpacing)
 			if (motor == 1 and adjustMotorTilt ): #tilt right motor up or down
 				rightMotorYEst += motorYcoordCorrectionScale*tscaleMultiplier
 				# because right motor mover, change x coordinate of left motor to keep distance between motors fixed
 				leftMotorXEst = rightMotorXEst - math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((rightMotorYEst-leftMotorYEst),2))
 				Completed = True
+				#print "2"+str(leftMotorXEst)+", "+str(rightMotorXEst)+", "+str(desiredMotorSpacing)
 			if (motor ==2 and adjustMotorYcoord): # moves both motors up or down in unison
 				leftMotorYEst += motorYcoordCorrectionScale*tscaleMultiplier
 				rightMotorYEst += motorYcoordCorrectionScale*tscaleMultiplier
 				Completed = True
+				#print "3"
 			if (motor ==3 and adjustMotorSpacing):
 				desiredMotorSpacing += motorSpacingCorrectionScale*tscaleMultiplier
 				adjustMotorSpacing=False
@@ -515,11 +573,13 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 				if (motor == 0):
 					leftMotorXEst = rightMotorXEst - math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((rightMotorYEst-leftMotorYEst),2))
 				else:
-					rightMotorXEst = leftMotorXEst - math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((leftMotorYEst-rightMotorYEst),2))
+					rightMotorXEst = leftMotorXEst + math.sqrt(math.pow(desiredMotorSpacing,2) - math.pow((leftMotorYEst-rightMotorYEst),2))
+				Completed = True
 		if (picked == 2 and adjustMotorXcoord): #all x moves are in unison to keep distance between motors fixed
 			leftMotorXEst += errorMagnitude*motorXcoordCorrectionScale*tscaleMultiplier
 			rightMotorXEst += errorMagnitude*motorXcoordCorrectionScale*tscaleMultiplier
 			Completed = True
+			#print "6"
 		if (picked == 3 and adjustChainSag):
 			chainSagCorrectionEst += errorMagnitude*chainSagCorrectionCorrectionScale*tscaleMultiplier
 			if (chainSagCorrectionEst < -99999):
@@ -527,10 +587,12 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 			if (chainSagCorrectionEst > 99999):
 				chainSagCorrectionEst = 40.0
 			Completed = True
+			#print "7"
 		if (picked == 4 and adjustRotationalRadius): #recommend against this one if at all possible
 			rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier
 			adjustRotationalRadius = False
 			Completed = True
+			#print "8"
 		if (picked == 5 and adjustChainCompensation):
 			leftChainToleranceEst += errorMagnitude*chainCompensationCorrectionScale*tscaleMultiplier
 			#rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier
@@ -539,6 +601,7 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 				leftChainToleranceEst = 1.0
 			adjustChainCompensation = False
 			Completed = True
+			#print "9"
 		if (picked == 6 and adjustChainCompensation):
 			rightChainToleranceEst += errorMagnitude*chainCompensationCorrectionScale*tscaleMultiplier
 			#rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier #counteract chain tolerance some
@@ -547,6 +610,7 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 				rightChainToleranceEst = 1.0
 			adjustChainCompensation = False
 			Completed = True
+			#print "10"
 
 	#make sure values aren't too far out of whack.
 	if (False): # will never be run if False
