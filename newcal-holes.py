@@ -186,7 +186,7 @@ adjustMotorTilt = True  # this allows tilting of top beam
 adjustMotorXcoord = True  # this allows shifting of top beam
 adjustMotorSpacingInterval = 50 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustRotationalRadiusInterval = 0 #0 means never, 1 means always, 100 means every 100 times there's no improvement
-adjustChainCompensationInterval = 10 #0 means never, 1 means always, 100 means every 100 times there's no improvement
+adjustChainCompensationInterval = 200 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustChainSag = True
 
 # Gather current machine parameters
@@ -299,8 +299,8 @@ leftMotorXEst = desiredMotorSpacing/-2.0#leftMotorX-(desiredMotorSpacing-motorSp
 leftMotorYEst = leftMotorY+(rightMotorY-leftMotorY)/2.0
 rightMotorXEst = desiredMotorSpacing/2.0#rightMotorX+(desiredMotorSpacing-motorSpacing)/2.0
 rightMotorYEst = rightMotorY-(rightMotorY-leftMotorY)/2.0#rightMotorY
-leftChainToleranceEst = leftChainTolerance
-rightChainToleranceEst = rightChainTolerance
+leftChainToleranceEst = 1.0#leftChainTolerance
+rightChainToleranceEst = 1.0#rightChainTolerance
 rotationRadiusEst = desiredRotationalRadius  # Not affected by chain compensation
 chainSagCorrectionEst= 30.0#chainSagCorrection
 
