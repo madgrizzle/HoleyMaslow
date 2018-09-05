@@ -150,6 +150,7 @@ if (holePattern == 3):
 ##---USE MILLIMETERS ONLY---##
 ##---My tape measure was off by 101 mm so the -101.0 adjust for it---##
 ##---CHANGE IT BECAUSE YOURS IS LIKELY DIFFERENT---###
+sensitivity = 1.0
 dH0H1 = 1069.0-40.0
 dH0H2 = 1069.0-40.0
 dH0H3 = 1070.0-40.0
@@ -159,7 +160,8 @@ dH1H4 = 1971.0-40.0
 dH2H3 = 1971.0-40.0
 dH3H4 = 751.5-40.0
 dH0M5 = 590.0-40.0
-dH2M5 = 1004.75-40.0 #1013.0-40.0
+dH2M5 = 1004.75 - 40.0 - sensitivity#1004.75-40.0
+dH2M5 = dH2H3 / 2.0
 
 dH0H5 = 471.0-40.0
 dH0H6 = 471.0-40.0
@@ -170,7 +172,8 @@ dH5H8 = 650.0-40.0
 dH6H7 = 650.0-40.0
 dH7H8 = 647.0-40.0
 dH0M9 = 590.0-40.0 #350.0-40.0
-dH6M9 = 342.75-40.0
+dH6M9 = 342.75-40.0 + sensitivity#342.75-40.0
+dH6M9 = dH6H7 / 2.0
 
 if (holePattern==1):
 	dH0H1 = dH0H5
@@ -216,6 +219,13 @@ leftChainTolerance = 1.0-(0.09636/100.0) # can't use current values .. value mus
 rightChainTolerance =1.0-(0.25666/100.0) # can't use current values .. value must be less than or equal to 1
 desiredRotationalRadius = 139.1 #rotationRadius #this allows you to change from rotation radius you cut with and make it a fixed value
 
+deltaChainTolerance = rightChainTolerance-leftChainTolerance
+print str(deltaChainTolerance)
+dH6M9 *= (1+deltaChainTolerance)
+dH2M5 *= (1+deltaChainTolerance)
+print str(dH2M5)+", "+str(dH2M5*(1+deltaChainTolerance))
+print str(dH6M9)+", "+str(dH6M9*(1+deltaChainTolerance))
+x = raw_input()
 # Gather current machine parameters
 sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
 leftMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing/-2.0
@@ -306,7 +316,8 @@ if (holePattern == 3):
 	print "H7 to H8 Slope: "+str(math.atan((Hy[7]-Hy[8])/(Hx[7]-Hx[8]))*180.0/3.141592)
 
 print "dH1H4: "+str(math.sqrt(math.pow(Hx[4]-Hx[1],2)+math.pow(Hy[4]-Hy[1],2)))+", Error: "+str(dH1H4-(math.sqrt(math.pow(Hx[4]-Hx[1],2)+math.pow(Hy[4]-Hy[1],2))))
-print "dH5H8: "+str(math.sqrt(math.pow(Hx[5]-Hx[8],2)+math.pow(Hy[5]-Hy[8],2)))+", Error: "+str(dH5H8-(math.sqrt(math.pow(Hx[5]-Hx[8],2)+math.pow(Hy[5]-Hy[8],2))))
+if (holePattern == 3):
+	print "dH5H8: "+str(math.sqrt(math.pow(Hx[5]-Hx[8],2)+math.pow(Hy[5]-Hy[8],2)))+", Error: "+str(dH5H8-(math.sqrt(math.pow(Hx[5]-Hx[8],2)+math.pow(Hy[5]-Hy[8],2))))
 
 
 x=raw_input("") #pause for review
@@ -444,7 +455,7 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 				print "leftMotorX: "+str(bestleftMotorXEst) + ", leftMotorY: "+str(bestleftMotorYEst)
 				print "rightMotorX: "+str(bestrightMotorXEst)+", rightMotorY:"+str(bestrightMotorYEst)
 				for x in range(holeCount):
-					print "  LChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RMS Error Hole "+str(x)+": " +str(round(math.sqrt(math.pow(bestLChainErrorHole[x],2)+math.pow(bestRChainErrorHole[x],2)),4))
+					print "  LChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RChain Error Hole "+str(x)+": " + str(round(bestRChainErrorHole[x],4)) + "\t RMS Error Hole "+str(x)+": " +str(round(math.sqrt(math.pow(bestLChainErrorHole[x],2)+math.pow(bestRChainErrorHole[x],2)),4))
 				#x = raw_input("")
 
 	#pick a random variable to adjust
@@ -552,7 +563,7 @@ print "Chain Sag Correction Value for Triangular Kinematics: " + str(round(bestc
 print "---------------------------------------------------------------------------------------------"
 print "Error Magnitude: " + str(round(bestErrorMagnitude, 3))
 for x in range(holeCount):
-	print "  LChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RMS Error Hole "+str(x)+": " +str(round(math.sqrt(math.pow(bestLChainErrorHole[x],2)+math.pow(bestRChainErrorHole[x],2)),4))
+	print "  LChain Error Hole "+str(x)+": " + str(round(bestLChainErrorHole[x],4)) + "\t RChain Error Hole "+str(x)+": " + str(round(bestRChainErrorHole[x],4)) + "\t RMS Error Hole "+str(x)+": " +str(round(math.sqrt(math.pow(bestLChainErrorHole[x],2)+math.pow(bestRChainErrorHole[x],2)),4))
 
 
 x="n"
