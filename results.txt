@@ -1,0 +1,18 @@
+---------------------------------------------------------------------------------------------
+Best so far at N: 3009243, Error Magnitude: 0.931
+Motor Spacing: 3581.47428, Motor Elevation: 479.74695, Top Beam Tilt: 0.0888631427684 degrees
+tleftMotorX: -1792.59763173, tleftMotorY: 1086.5696
+trightMotorX: 1788.87234072, trightMotorY:1092.1243
+tmotorspacing: 3581.47428
+Rotation Disk Radius: 132.88, Chain Sag Correction Value: 22.443462647, Left Chain:0.0632865150145, Right Chain:0.0632865150145
+leftMotorX: -1792.59763173, leftMotorY: 1086.5696
+rightMotorX: 1788.87234072, rightMotorY:1092.1243
+  LChain Error Hole 0: -0.6028   RChain Error Hole 0: -0.8675    RMS Error Hole 0: 1.0564
+  LChain Error Hole 1: -0.2989   RChain Error Hole 1: 0.3        RMS Error Hole 1: 0.4235
+  LChain Error Hole 2: 0.8597    RChain Error Hole 2: 0.729      RMS Error Hole 2: 1.1272
+  LChain Error Hole 3: -0.5312   RChain Error Hole 3: 0.4179     RMS Error Hole 3: 0.6759
+  LChain Error Hole 4: 0.5885    RChain Error Hole 4: -0.5364    RMS Error Hole 4: 0.7962
+  LChain Error Hole 5: 0.9908    RChain Error Hole 5: -0.1574    RMS Error Hole 5: 1.0033
+  LChain Error Hole 6: -0.3237   RChain Error Hole 6: -0.7412    RMS Error Hole 6: 0.8088
+  LChain Error Hole 7: -1.5464   RChain Error Hole 7: -0.0826    RMS Error Hole 7: 1.5486
+  LChain Error Hole 8: 0.3       RChain Error Hole 8: -0.1639    RMS Error Hole 8: 0.3419
