@@ -16,3 +16,63 @@ rightMotorX: 1788.87234072, rightMotorY:1092.1243
   LChain Error Hole 6: -0.3237   RChain Error Hole 6: -0.7412    RMS Error Hole 6: 0.8088
   LChain Error Hole 7: -1.5464   RChain Error Hole 7: -0.0826    RMS Error Hole 7: 1.5486
   LChain Error Hole 8: 0.3       RChain Error Hole 8: -0.1639    RMS Error Hole 8: 0.3419
+
+New Chain Sag:  All variables adjusted:
+Best so far at N: 565220, Error Magnitude: 0.921
+Motor Spacing: 3581.62514, Motor Elevation: 480.03155, Top Beam Tilt: 0.0909870232548 degrees
+tleftMotorX: -1792.70954134, tleftMotorY: 1086.7877
+trightMotorX: 1788.91108256, trightMotorY:1092.4754
+tmotorspacing: 3581.62514
+Rotation Disk Radius: 133.368, Chain Sag Correction Value: 12.9873313865, Left Chain:0.0491877710216, Right Chain:0.0491877710216
+leftMotorX: -1792.70954134, leftMotorY: 1086.7877
+rightMotorX: 1788.91108256, rightMotorY:1092.4754
+  LChain Error Hole 0: -0.5946   RChain Error Hole 0: -0.8513    RMS Error Hole 0: 1.0384
+  LChain Error Hole 1: -0.4023   RChain Error Hole 1: 0.2999     RMS Error Hole 1: 0.5018
+  LChain Error Hole 2: 0.8503    RChain Error Hole 2: 0.7463     RMS Error Hole 2: 1.1313
+  LChain Error Hole 3: -0.5133   RChain Error Hole 3: 0.4887     RMS Error Hole 3: 0.7088
+  LChain Error Hole 4: 0.6233    RChain Error Hole 4: -0.6039    RMS Error Hole 4: 0.8679
+  LChain Error Hole 5: 0.9386    RChain Error Hole 5: -0.178     RMS Error Hole 5: 0.9554
+  LChain Error Hole 6: -0.2997   RChain Error Hole 6: -0.6691    RMS Error Hole 6: 0.7331
+  LChain Error Hole 7: -1.4885   RChain Error Hole 7: -0.0198    RMS Error Hole 7: 1.4886
+  LChain Error Hole 8: 0.2997    RChain Error Hole 8: -0.2171    RMS Error Hole 8: 0.37
+
+
+New Chain Sag: Chain Sag Correction pegged at 25.62:
+Best so far at N: 1824262, Error Magnitude: 1.018
+Motor Spacing: 3581.77428, Motor Elevation: 480.51045, Top Beam Tilt: 0.0919686192906 degrees
+tleftMotorX: -1792.78820758, tleftMotorY: 1087.2358
+trightMotorX: 1788.98145816, trightMotorY:1092.9851
+tmotorspacing: 3581.77428
+Rotation Disk Radius: 134.416, Chain Sag Correction Value: 25.62, Left Chain:0.0, Right Chain:0.0
+leftMotorX: -1792.78820758, leftMotorY: 1087.2358
+rightMotorX: 1788.98145816, rightMotorY:1092.9851
+  LChain Error Hole 0: -0.4269   RChain Error Hole 0: -0.6564    RMS Error Hole 0: 0.783
+  LChain Error Hole 1: -0.5576   RChain Error Hole 1: 0.4239     RMS Error Hole 1: 0.7004
+  LChain Error Hole 2: 1.0269    RChain Error Hole 2: -0.0009    RMS Error Hole 2: 1.0269
+  LChain Error Hole 3: -1.3004   RChain Error Hole 3: 0.7156     RMS Error Hole 3: 1.4842
+  LChain Error Hole 4: 0.7343    RChain Error Hole 4: -0.7229    RMS Error Hole 4: 1.0304
+  LChain Error Hole 5: 0.9603    RChain Error Hole 5: 0.0101     RMS Error Hole 5: 0.9603
+  LChain Error Hole 6: -0.0791   RChain Error Hole 6: -0.4485    RMS Error Hole 6: 0.4554
+  LChain Error Hole 7: -1.2995   RChain Error Hole 7: 0.2391     RMS Error Hole 7: 1.3213
+  LChain Error Hole 8: 0.4717    RChain Error Hole 8: -0.1727    RMS Error Hole 8: 0.5023
+
+
+New Chain Sag: Chain Tolerance Max of 0.01
+---------------------------------------------------------------------------------------------
+Best so far at N: 201307, Error Magnitude: 0.938
+Motor Spacing: 3581.49664, Motor Elevation: 480.704, Top Beam Tilt: 0.0932283721179 degrees
+tleftMotorX: -1792.68833967, tleftMotorY: 1087.3902
+trightMotorX: 1788.80355916, trightMotorY:1093.2178
+tmotorspacing: 3581.49664
+Rotation Disk Radius: 134.416, Chain Sag Correction Value: 14.9984727867, Left Chain:0.01, Right Chain:0.01
+leftMotorX: -1792.68833967, leftMotorY: 1087.3902
+rightMotorX: 1788.80355916, rightMotorY:1093.2178
+  LChain Error Hole 0: -0.5636   RChain Error Hole 0: -0.8183    RMS Error Hole 0: 0.9936
+  LChain Error Hole 1: -0.6268   RChain Error Hole 1: 0.3243     RMS Error Hole 1: 0.7057
+  LChain Error Hole 2: 0.9752    RChain Error Hole 2: 0.6592     RMS Error Hole 2: 1.1771
+  LChain Error Hole 3: -0.5967   RChain Error Hole 3: 0.6965     RMS Error Hole 3: 0.9171
+  LChain Error Hole 4: 0.6928    RChain Error Hole 4: -0.7954    RMS Error Hole 4: 1.0548
+  LChain Error Hole 5: 0.7982    RChain Error Hole 5: -0.2074    RMS Error Hole 5: 0.8247
+  LChain Error Hole 6: -0.1683   RChain Error Hole 6: -0.5131    RMS Error Hole 6: 0.54
+  LChain Error Hole 7: -1.3422   RChain Error Hole 7: 0.1485     RMS Error Hole 7: 1.3503
+  LChain Error Hole 8: 0.3       RChain Error Hole 8: -0.3662    RMS Error Hole 8: 0.4734
