@@ -42,24 +42,28 @@ def CalculateChainLengths(leftMotorX, leftMotorY, rightMotorX, rightMotorY, targ
 	else:
 		leftForce = chainSagCorrection/((targetX-leftMotorX)/(leftMotorY-targetY)+(rightMotorX-targetX)/(rightMotorY-targetY))*math.sqrt(math.pow(((rightMotorX-targetX)/(rightMotorY-targetY)),2)*math.pow(((targetX-leftMotorX)/(leftMotorY-targetY)),2)+math.pow(((rightMotorX-targetX)/(rightMotorY-targetY)),2))
 		rightForce =chainSagCorrection/((targetX-leftMotorX)/(leftMotorY-targetY)+(rightMotorX-targetX)/(rightMotorY-targetY))*math.sqrt(math.pow(((rightMotorX-targetX)/(rightMotorY-targetY)),2)*math.pow(((targetX-leftMotorX)/(leftMotorY-targetY)),2)+math.pow(((targetX-leftMotorX)/(leftMotorY-targetY)),2))
-		#print "targetX,Y:"+str(targetX)+", "+str(targetY)
-		#print "ForcesL,R:"+str(leftForce)+", "+str(rightForce)
+
 		hl = math.cos(leftChainAngleTarget)*leftChainStraightTarget*0.00328084
 		hr = math.cos(rightChainAngleTarget)*rightChainStraightTarget*0.00328084
 		vl = math.sin(leftChainAngleTarget)*leftChainStraightTarget*0.00328084
 		vr = math.sin(rightChainAngleTarget)*rightChainStraightTarget*0.00328084
-		#print "angles: "+str(leftChainAngleTarget*180.0/3.141592)+", "+str(rightChainAngleTarget*180.0/3.141592)
-		#print "hl, hr: "+str(hl)+", "+str(hr)
-		#print "vl, vr: "+str(vl)+", "+str(vr)
-		al = leftForce/0.09
-		ar = rightForce/0.09
-		#print "al, ar: "+str(al)+", "+str(ar)
+		al = math.cos(leftChainAngleTarget)*leftForce/0.09
+		ar = math.cos(rightChainAngleTarget)*rightForce/0.09
 		leftChainSag = math.sqrt( math.pow((2*al*math.sinh(hl/(2*al))),2)+vl*vl)/0.00328084
 		rightChainSag = math.sqrt( math.pow((2*ar*math.sinh(hr/(2*ar))),2)+vr*vr)/0.00328084
-		#print "Lchains: "+str(leftChainStraightTarget)+", "+str(leftChainSag)
-		#print "Rchains: "+str(rightChainStraightTarget)+", "+str(rightChainSag)
 		LChainLengthTarget = (leftChainAroundSprocketTarget + leftChainSag*leftChainTolerance)-rotationRadius
 		RChainLengthTarget = (rightChainAroundSprocketTarget + rightChainSag*rightChainTolerance)-rotationRadius
+
+		#print "chainSag: "+str(chainSagCorrection)
+		#print "targetX,Y: "+str(targetX)+", "+str(targetY)
+		#print "chainStraightL,R: "+str(leftChainStraightTarget)+", "+str(rightChainStraightTarget)
+		#print "ForcesL,R: "+str(leftForce)+", "+str(rightForce)
+		#print "anglesL,R: "+str(leftChainAngleTarget*180.0/3.141592)+", "+str(rightChainAngleTarget*180.0/3.141592)
+		#print "hl, hr: "+str(hl)+", "+str(hr)
+		#print "vl, vr: "+str(vl)+", "+str(vr)
+		#print "al, ar: "+str(al)+", "+str(ar)
+		#print "Lchains (straight, sag, delta): "+str(leftChainStraightTarget)+", "+str(leftChainSag)+", "+str(leftChainSag-leftChainStraightTarget)
+		#print "Rchains (straight, sag, delta): "+str(rightChainStraightTarget)+", "+str(rightChainSag)+", "+str(rightChainSag-rightChainStraightTarget)
 		#print "finals: "+str(LChainLengthTarget)+", "+str(RChainLengthTarget)
 		#x=raw_input()
 		return LChainLengthTarget, RChainLengthTarget
@@ -264,7 +268,7 @@ acceptableTolerance = .05
 numberOfIterations = 100000000  # reduced number of iterations
 motorYcoordCorrectionScale = 0.01
 motorXcoordCorrectionScale = 0.05
-chainSagCorrectionCorrectionScale = 0.001
+chainSagCorrectionCorrectionScale = 0.0001
 motorSpacingCorrectionScale = 0.001
 rotationRadiusCorrectionScale = 0.01
 chainCompensationCorrectionScale = 0.001
@@ -276,6 +280,7 @@ adjustMotorXcoord = False  # this allows shifting of top beam
 adjustMotorSpacingInterval = 100 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustRotationalRadiusInterval = 100 #0 means never, 1 means always, 100 means every 100 times there's no improvement
 adjustChainCompensationInterval = 1 #0 means never, 1 means always, 100 means every 100 times there's no improvement
+adjustChainSagInterval = 1000
 adjustChainSag = True
 
 #parameters used during calibration cut.. currently assumes motors are level and 0,0 is centered
@@ -297,7 +302,7 @@ dH6M9 *= (1+deltaChainTolerance)
 dH2M5 *= (1+deltaChainTolerance)
 print str(dH2M5)+", "+str(dH2M5*(1+deltaChainTolerance))
 print str(dH6M9)+", "+str(dH6M9*(1+deltaChainTolerance))
-x = raw_input()
+x=raw_input("press enter") #pause for review
 # Gather current machine parameters
 sprocketRadius = (gearTeeth*chainPitch / 2.0 / 3.14159) # + chainPitch/math.sin(3.14159 / gearTeeth)/2.0)/2.0 # new way to calculate.. needs validation
 leftMotorX = math.cos(motorTilt*3.141592/180.0)*motorSpacing/-2.0
@@ -312,7 +317,7 @@ rightMotorYEst = rightMotorY-(rightMotorY-leftMotorY)/2.0#rightMotorY
 leftChainToleranceEst = 1.0#leftChainTolerance
 rightChainToleranceEst = 1.0#rightChainTolerance
 rotationRadiusEst = desiredRotationalRadius  # Not affected by chain compensation
-chainSagCorrectionEst= chainSagCorrection
+chainSagCorrectionEst= 25.0#chainSagCorrection
 
 iterativeSolvedH0M5= True
 
@@ -369,7 +374,7 @@ if (holePattern == 3):
 	print "dH6H7: "+str(math.sqrt(math.pow(Hx[6]-Hx[7],2)+math.pow(Hy[6]-Hy[7],2)))+", Error: "+str(dH6H7-(math.sqrt(math.pow(Hx[6]-Hx[7],2)+math.pow(Hy[6]-Hy[7],2))))
 
 
-x=raw_input("") #pause for review
+x=raw_input("press enter") #pause for review #pause for review
 
 # Calculate the chain lengths for each hole location based upon inputted model
 LChainLengthHole = []
@@ -386,7 +391,7 @@ print "leftMotorX: "+str(leftMotorX) + ", leftMotorY: "+str(leftMotorY)+", right
 for x in range(len(RChainLengthHole)):
 	print "LHole"+str(x)+": "+str(LChainLengthHole[x])+", RHole1"+str(x)+": "+str(RChainLengthHole[x])
 
-x=raw_input("") #pause for review
+x=raw_input("press enter") #pause for review
 
 LChainErrorHole = []
 RChainErrorHole = []
@@ -408,9 +413,11 @@ reportCounter = 99
 adjustMotorSpacingCounter = 0
 adjustRotationalRadiusCounter = 0
 adjustChainCompensationCounter = 0
+adjustChainSagCounter = 0
 adjustMotorSpacing = False # just initializing these variables
 adjustRotationalRadius = False # just initializing these variables
 adjustChainCompensation = False # just initializing these variables
+adjustChainSag = False # just initializing these variables
 scaleMultiplier = 1.0
 n = 0
 print "Iterating for new machine parameters"
@@ -457,6 +464,10 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 		if (adjustChainCompensationCounter == adjustChainCompensationInterval):
 			adjustChainCompensationCounter = 0
 			adjustChainCompensation = True
+		adjustChainSagCounter +=1
+		if (adjustChainSagCounter == adjustChainSagInterval):
+			adjustChainSagCounter = 0
+			adjustChainSag = True
 	else:
 		adjustMotorSpacingCounter = 0
 		adjustRotationalRadiusCounter = 0
@@ -556,13 +567,14 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 			#	chainSagCorrectionEst = 50.0
 			#print "-#"+str(chainSagCorrectionEst)+"#-"
 			Completed = True
+			adjustChainSag = False
 			#print "7"
 		if (picked == 4 and adjustRotationalRadius): #recommend against this one if at all possible
 			rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier
 			adjustRotationalRadius = False
 			Completed = True
 			#print "8"
-		if (picked == 5):# and adjustChainCompensation):
+		if (picked == 5 and adjustChainCompensation):
 			leftChainToleranceEst += errorMagnitude*chainCompensationCorrectionScale*tscaleMultiplier
 			#rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier
 			#make sure chain tolerance doesn't go over 1 (i.e., chain is shorter than should be.. this can cause optimization to go bonkers)
@@ -573,7 +585,7 @@ while(errorMagnitude > acceptableTolerance and n < numberOfIterations):
 			adjustChainCompensation = False
 			Completed = True
 			#print "9"
-		if (picked == 5):# and adjustChainCompensation):
+		#if (picked == 5 and adjustChainCompensation):
 			rightChainToleranceEst += errorMagnitude*chainCompensationCorrectionScale*tscaleMultiplier
 			#rotationRadiusEst -= errorMagnitude*rotationRadiusCorrectionScale*tscaleMultiplier #counteract chain tolerance some
 			#make sure chain tolerance doesn't go over 1 (i.e., chain is shorter than should be.. this can cause optimization to go bonkers)
