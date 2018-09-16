@@ -316,7 +316,7 @@ settings = {
                 "desc": "Enable modifying x,y coordinates during calculations to account for errors determined by optical calibration",
                 "key": "enableOpticalCalibration",
                 "default": 0,
-                "firmwareKey:": 44
+                "firmwareKey": 44
             },
             {
                 "type": "string",
@@ -672,8 +672,7 @@ def syncFirmwareKey(firmwareKey, value, data):
         for option in settings[section]:
             if 'firmwareKey' in option and option['firmwareKey'] == firmwareKey:
                 storedValue = data.config.get(section, option['key'])
-
-		if (option['key'] == "spindleAutomate"):
+                if (option['key'] == "spindleAutomate"):
                     if (storedValue == "Servo"):
                         storedValue = 1
                     elif (storedValue == "Relay_High"):
@@ -683,9 +682,11 @@ def syncFirmwareKey(firmwareKey, value, data):
                     else:
                         storedValue = 0
                 if ( (firmwareKey == 45) ):
+                    print "firmwareKey = 45"
                     if (storedValue != ""):
-                        sendErrorArray(firmwareKey, storedValue)
+                        sendErrorArray(firmwareKey, storedValue, data)
                 elif not isClose(float(storedValue), value):
+                    print "firmwareKey(send) = "+str(firmwareKey)
                     data.gcode_queue.put("$" + str(firmwareKey) + "=" + str(storedValue))
                 else:
                     break
@@ -700,7 +701,7 @@ def isClose(a, b, rel_tol=1e-06):
     '''
     return abs(a-b) <= rel_tol * max(abs(a), abs(b))
 
-def parseErrorArray(value):
+def parseErrorArray(value, asFloat):
 
     #not the best programming, but I think it'll work
     xErrors = [[0 for x in range(15)] for y in range(31)]
@@ -725,28 +726,36 @@ def parseErrorArray(value):
         if (yCounter == 15):
             xCounter = 0
             yCounter = 0
-            while ( (index < len(value) ) and ( value[index] != ',') ):
-                val += value[index]
+            while (index < len(value) ):
+                while ( (index < len(value) ) and ( value[index] != ',') ):
+                    val += value[index]
+                    index += 1
                 index += 1
-            index += 1
-            yErrors[xCounter][yCounter]
-            val=""
-            xCounter += 1
-            if (xCounter == 31):
-                xCounter = 0
-                yCounter += 1
-            if (yCounter == 15):
-                break;
+                #print str(xCounter)+", "+str(yCounter)+": "+val+"->"+str(len(val))
+                yErrors[xCounter][yCounter] = int(val)
+                val=""
+                xCounter += 1
+                if (xCounter == 31):
+                    xCounter = 0
+                    yCounter += 1
+                if (yCounter == 15):
+                    break;
 
-    return xErrors, yErrors
+    if (asFloat==False):
+        return xErrors, yErrors
+    else:
+        xFloatErrors = [[0.0 for x in range(15)] for y in range(31)]
+        yFloatErrors = [[0.0 for x in range(15)] for y in range(32)]
+        for x in range(31):
+            for y in range(15):
+                xFloatErrors[x][y] = float(xErrors[x][y])/1000.0
+                yFloatErrors[x][y] = float(yErrors[x][y])/1000.0
+        return xFloatErrors, yFloatErrors
 
-def sendErrorArray(firmwareKey, value):
+def sendErrorArray(firmwareKey, value, data):
     # parse out the array from string and then send them using the $O command
-    xErrors, yErrors = parseErrorArray(value)
-
-
+    xErrors, yErrors = parseErrorArray(value,False)
     # now send the array:
-
-    for x in range(0, 31):
-        for y in range (0, 15):
+    for x in range(0, 31):#31
+        for y in range (0, 15):#15
             data.gcode_queue.put("$O=" + str(x)+","+str(y)+","+str(xErrors[x][y])+","+str(yErrors[x][y])+" ")
