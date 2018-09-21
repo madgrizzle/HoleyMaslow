@@ -195,3 +195,53 @@
         else:
             popup=Popup(title="Error", content = Label(text="Could not find square"), size_hint=(None,None), size=(400,400))
             popup.open()
+
+
+
+
+
+################################
+
+
+                Label:
+                    text: "Move To:"
+                Label:
+                Label:
+                Button:
+                    text: "[-1,+1]"
+                    #on_release: root.on_MoveandMeasure(False,-1,1)
+                    on_release: root.on_HomeToPos(-1,1)
+                Button:
+                    text: "[0,+1]"
+                    #on_release: root.on_MoveandMeasure(False,0,1)
+                    on_release: root.on_HomeToPos(0,1)
+                Button:
+                    text: "[+1,+1]"
+                    #on_release: root.on_MoveandMeasure(False,1,1)
+                    on_release: root.on_HomeToPos(1,1)
+
+                Button:
+                    text: "[-1,0]"
+                    #on_release: root.on_MoveandMeasure(False,-1,0)
+                    on_release: root.on_HomeToPos(-1,0)
+                Button:
+                    text: "[0,0]"
+                    #on_release: root.on_MoveandMeasure(False,0,0)
+                    on_release: root.on_HomeToPos(0,0)
+                Button:
+                    text: "[+1,0]"
+                    #on_release: root.on_MoveandMeasure(False,1,0)
+                    on_release: root.on_HomeToPos(1,0)
+
+                Button:
+                    text: "[-1,-1]"
+                    #on_release: root.on_MoveandMeasure(False,-1,-1)
+                    on_release: root.on_HomeToPos(-1,-1)
+                Button:
+                    text: "[0,-1]"
+                    #on_release: root.on_MoveandMeasure(False,0,-1)
+                    on_release: root.on_HomeToPos(0,-1)
+                Button:
+                    text: "[+1,-1]"
+                    #on_release: root.on_MoveandMeasure(False,1,-1)
+                    on_release: root.on_HomeToPos(1,-1)
