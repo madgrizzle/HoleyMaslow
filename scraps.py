@@ -245,3 +245,39 @@
                     text: "[+1,-1]"
                     #on_release: root.on_MoveandMeasure(False,1,-1)
                     on_release: root.on_HomeToPos(1,-1)
+
+
+#########################
+def on_oldAutoHome(self):
+
+    minX = self.HomingRange*-1
+    if (minX<-7):
+        minY=7
+    else:
+        minY=minX*-1
+    maxX = self.HomingRange
+    maxY = minY * -1
+
+    if self.inAutoMode == False:
+        self.HomingX = 0.0
+        self.HomingY = 0.0
+        self.HomingPosX = 0
+        self.HomingPosY = 0
+        self.HomingPosX=minX
+        self.HomingPosY=minY
+        self.inAutoMode = True
+    else:
+        self.HomingPosX += self.HomingScanDirection
+        if ((self.HomingPosX==maxX+1) or (self.HomingPosX==minX-1)):
+            if self.HomingPosX == maxX+1:
+                self.HomingPosX = maxX
+            else:
+                self.HomingPosX = minX
+            self.HomingScanDirection *= -1
+            self.HomingPosY -= 1
+    if (self.HomingPosY!=maxY-1):
+        self.HomeIn()
+    else:
+        self.inAutoMode = False
+        print "Calibration Completed"
+        self.printCalibrationErrorValue()
