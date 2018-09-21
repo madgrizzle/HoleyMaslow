@@ -66,7 +66,7 @@ averageDx = np.empty([],dtype=float)
 averageDy = np.empty([],dtype=float)
 averageDi = np.empty([],dtype=float)
 testCount = 0
-
+outFile = open("cameraValues.csv","w")
 cv2.namedWindow("image",0)
 
 for file in glob.glob("testImages\*.png"):
@@ -178,9 +178,10 @@ for file in glob.glob("testImages\*.png"):
                 #cv2.putText(orig, "{:.0f}, {:.0f}".format(box[3,0],box[3,1]), (box[3,0], box[3,1]),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
                 #cv2.putText(orig, "{:.3f}, {:.3f}".format(xB,yB,0.0), (int(mX), int(mY - 40)),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
                 cv2.putText(orig, "Dx:{:.3f}, Dy:{:.3f}->Di:{:.3f}mm".format(Dx,Dy,Dist), (15, 40),cv2.FONT_HERSHEY_SIMPLEX, 0.55, colors[0], 2)
+                outFile.write("{:.3f}, {:.3f}, {:.3f}\n".format(Dx,Dy,Dist))
                 if True:#(Dist>0.25):
                     cv2.imshow("image", orig)
-                    cv2.waitKey(0)
+                    #cv2.waitKey(0)
                     #cv2.destroyAllWindows()
                     if (testCount == 15):
                         Dx = 19995.0
@@ -197,3 +198,4 @@ avgDi, stdDi = removeOutliersAndAverage(averageDi)
 print "AverageDx:"+str(avgDx)+" at "+str(stdDx)+" sd"
 print "AverageDy:"+str(avgDy)+" at "+str(stdDy)+" sd"
 print "AverageDi:"+str(avgDi)+" at "+str(stdDi)+" sd"
+outFile.close()
