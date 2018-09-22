@@ -72,6 +72,7 @@ class MeasuredImage(Image):
 class OpticalCalibrationCanvas(GridLayout):
 
     capture = None
+    cameraCount = 0
     refObj = None
     D = 0
     done = ObjectProperty(None)
@@ -115,11 +116,19 @@ class OpticalCalibrationCanvas(GridLayout):
         xyErrors = self.data.config.get('Computed Settings', 'xyErrorArray')
         self.calErrorsX, self.calErrorsY = maslowSettings.parseErrorArray(xyErrors, True)
         #print str(xErrors[2][0])
-        self.capture = cv2.VideoCapture(0)
-        if self.capture.isOpened():
-            self.ids.KivyCamera.start(self.capture)
-        else:
-            print "Failed to open camera"
+
+        # Work backwards to find a camera (assumes <= 2 cameras)
+        for i in reversed(range(2)):
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                self.cameraCount = i + 1
+                break
+            cap.release()
+
+        print "Found %d cameras" % self.cameraCount
+        self.ids.cameras.values = self.cameras()
+        self.startCamera(self.cameraCount - 1)
+
         inAutoMode = False
         inAutoModeForFirstTime = True
 
@@ -129,6 +138,20 @@ class OpticalCalibrationCanvas(GridLayout):
             self.data.gcode_queue.queue.clear()
         self.inAutoMode = False
         self.inAutoModeForFirstTime = True
+
+    def startCamera(self, index):
+        self.capture = cv2.VideoCapture(index)
+        if self.capture.isOpened():
+            self.ids.KivyCamera.start(self.capture)
+        else:
+            print "Failed to open camera"
+
+    def cameras(self):
+        return ["%d" % i for i in range(self.cameraCount)]
+
+    def setCamera(self, val):
+        self.capture.release()
+        self.startCamera(int(val))
 
     def on_stop(self):
         self.capture.release()
@@ -225,6 +248,7 @@ class OpticalCalibrationCanvas(GridLayout):
         calX = 0
         calY = 0
         count = 0
+<<<<<<< HEAD
         #print str(self.HomingTLX)+", "+str(self.HomingBRX)+", "+str(self.HomingTLY)+", "+str(self.HomingBRY)
         for y in range(self.HomingTLY, self.HomingBRY - 1, -1):
             for x in range(self.HomingTLX, self.HomingBRX + 1, +1):
@@ -234,6 +258,15 @@ class OpticalCalibrationCanvas(GridLayout):
                 calY += (self.calErrorsY[x+15][7-y]-self.calErrorsY[15][7]) ** 2.0
                 count += 1
                 #print count
+=======
+        for y in range(self.HomingTLY, self.HomingBRY - 1, -1):
+            for x in range(self.HomingTLX, self.HomingBRX + 1, 1):
+                if (abs(y)<=7):
+                    self.ids.OpticalCalibrationDistance.text += "[{:.2f},{:.2f}] ".format(self.calErrorsX[x+15][7-y], self.calErrorsY[x+15][7-y])
+                    calX += (self.calErrorsX[x+15][7-y]-self.calErrorsX[15][7]) ** 2.0
+                    calY += (self.calErrorsY[x+15][7-y]-self.calErrorsY[15][7]) ** 2.0
+                    count += 1
+>>>>>>> 903eb9d488bf4fe8d2f6b96dce4ce5a2e58838b9
             self.ids.OpticalCalibrationDistance.text +="\n"
         calX = math.sqrt(calX/count)
         calY = math.sqrt(calY/count)
